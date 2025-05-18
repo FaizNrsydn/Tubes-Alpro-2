@@ -266,7 +266,6 @@ func cariBidang(reader *bufio.Reader) {
 	found := false
 	for i := 0; i < len(data); i++ {
 		bidang := strings.ToLower(data[i].BidangUsaha)
-		// Proses pencarian sekuensial manual
 		match := true
 		if !strings.Contains(bidang, keyword) {
 			match = false
@@ -308,7 +307,7 @@ func cariNama(reader *bufio.Reader) {
 		fmt.Println("Belum ada startup yang tersedia.")
 		return
 	}
-	insertionSortByNama() // pastikan diurutkan dulu berdasarkan nama
+	insertionSortByNama()
 	fmt.Print("\nMasukkan nama startup yang ingin dicari: ")
 	keyword := readLineStr(reader)
 	low := 0
@@ -410,7 +409,7 @@ func tambahAnggotaTim(reader *bufio.Reader) {
 		Tampilkan()
 		fmt.Print("\nMasukkan nomor startup yang ingin ditambahkan anggota tim: ")
 		idx := readLineInt(reader)
-		idx-- // konversi ke indeks array (mulai dari 0)
+		idx--
 		if idx < 0 || idx >= len(data) {
 			fmt.Println("nomor tidak valid.")
 			break
