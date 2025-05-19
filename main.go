@@ -352,7 +352,7 @@ func urut(reader *bufio.Reader) {
 		}
 		fmt.Println("1.	Urutkan Berdasarkan Total Pendanaan (Selection Sort)")
 		fmt.Println("2.	Urutkan Berdasarkan Tahun Berdiri (Insertion Sort)")
-		fmt.Print("Piliha(1-2) :")
+		fmt.Print("Pilihan(1-2) :")
 		pilih := readLineInt(reader)
 		if pilih == 1 {
 			urutDana()
@@ -392,7 +392,7 @@ func urutTahunBerdiri() {
 		}
 		data[j+1] = key
 	}
-	fmt.Println("Daftar Startup (Urut Berdasarkan Total Pendanaan - Terlama ke Terbaru):")
+	fmt.Println("Daftar Startup (Urut Berdasarkan Tahun Berdiri - Terlama ke Terbaru):")
 	Tampilkan()
 }
 
