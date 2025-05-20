@@ -14,6 +14,7 @@ type Tim struct {
 }
 
 type Startup struct {
+	id                int
 	Nama, BidangUsaha string
 	TahunBerdiri      int
 	TotalPendanaan    float64
@@ -24,6 +25,7 @@ var data []Startup
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
+	tambahDummy()
 	for {
 		fmt.Println("----------------------------------------------------")
 		fmt.Println("\t\tMENU UTAMA")
@@ -84,12 +86,51 @@ func readLineFloat(reader *bufio.Reader) float64 {
 	return input
 }
 
+func tambahDummy() {
+	data = append(data, Startup{
+		id:             1,
+		Nama:           "TechHive",
+		BidangUsaha:    "AI dan Otomasi",
+		TahunBerdiri:   2020,
+		TotalPendanaan: 1500000000,
+		Tim: []Tim{
+			{Nama: "Adit", Peran: "CEO"},
+			{Nama: "Rani", Peran: "CTO"},
+		},
+	})
+	data = append(data, Startup{
+		id:             2,
+		Nama:           "EduPlus",
+		BidangUsaha:    "EdTech",
+		TahunBerdiri:   2019,
+		TotalPendanaan: 950000000,
+		Tim: []Tim{
+			{Nama: "Bimo", Peran: "Founder"},
+			{Nama: "Sinta", Peran: "Marketing Lead"},
+		},
+	})
+	data = append(data, Startup{
+		id:             3,
+		Nama:           "GoFarm",
+		BidangUsaha:    "AgriTech",
+		TahunBerdiri:   2021,
+		TotalPendanaan: 1200000000,
+		Tim: []Tim{
+			{Nama: "Dian", Peran: "CEO"},
+			{Nama: "Lukman", Peran: "Engineer"},
+		},
+	})
+	fmt.Println(">> Data dummy berhasil ditambahkan.")
+}
+
 func tambahStartup(reader *bufio.Reader) {
 	fmt.Println()
 	fmt.Println("----------------------------------")
 	fmt.Println("||\tTambah data Startup\t||")
 	fmt.Println("----------------------------------")
 	for {
+		fmt.Print("ID Startup\t: ")
+		ID := readLineInt(reader)
 		fmt.Print("Nama Startup\t: ")
 		Nama := readLineStr(reader)
 		fmt.Print("Bidang Usaha\t: ")
@@ -99,6 +140,7 @@ func tambahStartup(reader *bufio.Reader) {
 		fmt.Print("Tahun Berdiri\t: ")
 		TahunBerdiri := readLineInt(reader)
 		startups := Startup{
+			id:             ID,
 			Nama:           Nama,
 			BidangUsaha:    BidangUsaha,
 			TahunBerdiri:   TahunBerdiri,
@@ -119,10 +161,10 @@ func tampilkanStartup() {
 			fmt.Println(">> Belum ada startup yang tersedia.")
 			break
 		}
-		for i, s := range data {
+		for _, s := range data {
 			fmt.Println()
 			fmt.Println("-----+-----+-----+-----+-----+-----")
-			fmt.Printf("[%d] %s\n", i+1, s.Nama)
+			fmt.Printf("[%d] %s\n", s.id, s.Nama)
 			fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
 			fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
 			fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
@@ -140,10 +182,10 @@ func tampilkanStartup() {
 }
 
 func Tampilkan() {
-	for i, s := range data {
+	for _, s := range data {
 		fmt.Println()
 		fmt.Println("-----+-----+-----+-----+-----+-----")
-		fmt.Printf("[%d] %s\n", i+1, s.Nama)
+		fmt.Printf("[%d] %s\n", s.id, s.Nama)
 		fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
 		fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
 		fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
@@ -157,9 +199,6 @@ func Tampilkan() {
 
 func ubahStartup(reader *bufio.Reader) {
 	fmt.Println()
-	fmt.Println("----------------------------------")
-	fmt.Println("||\tUbah data Startup\t||")
-	fmt.Println("----------------------------------")
 	for {
 		if len(data) == 0 {
 			fmt.Println("Belum ada startup yang tersedia.")
@@ -167,14 +206,37 @@ func ubahStartup(reader *bufio.Reader) {
 		}
 		Tampilkan()
 		fmt.Println()
-		fmt.Println("----------------------------------------------------")
-		fmt.Print("Masukkan nomor startup yang ingin diubah: ")
-		var idx int
-		idx = readLineInt(reader)
-		idx--
-		if idx < 0 || idx >= len(data) {
-			fmt.Println(">> Indeks tidak valid.")
+		fmt.Println("----------------------------------")
+		fmt.Println("||\tUbah data Startup\t||")
+		fmt.Println("----------------------------------")
+		fmt.Print("Masukkan ID startup yang ingin diubah: ")
+		id := readLineInt(reader)
+		idx := -1
+		for i, s := range data {
+			if s.id == id {
+				idx = i
+				break
+			}
+		}
+		if idx == -1 {
+			fmt.Println(">> ID startup tidak ditemukan.")
 			return
+		}
+		fmt.Printf("ID [%d]: ", data[idx].id)
+		newID := readLineInt(reader)
+		if newID != 0 && newID != data[idx].id {
+			duplikat := false
+			for i, s := range data {
+				if i != idx && s.id == newID {
+					duplikat = true
+					break
+				}
+			}
+			if duplikat {
+				fmt.Println(">> ID sudah digunakan oleh startup lain.")
+			} else {
+				data[idx].id = newID
+			}
 		}
 		fmt.Printf("Nama [%s]: ", data[idx].Nama)
 		input := readLineStr(reader)
@@ -215,12 +277,17 @@ func hapusStartup(reader *bufio.Reader) {
 			break
 		}
 		Tampilkan()
-		fmt.Print("Masukkan nomor startup yang ingin dihapus: ")
-		var idx int
-		idx = readLineInt(reader)
-		idx--
-		if idx < 0 || idx >= len(data) {
-			fmt.Println(">> Indeks tidak valid.")
+		fmt.Print("Masukkan ID startup yang ingin dihapus: ")
+		id := readLineInt(reader)
+		idx := -1
+		for i, s := range data {
+			if s.id == id {
+				idx = i
+				break
+			}
+		}
+		if idx == -1 {
+			fmt.Println(">> ID startup tidak ditemukan.")
 			return
 		}
 		fmt.Println(">> Startup", data[idx].Nama, "berhasil dihapus.")
@@ -264,7 +331,7 @@ func cariBidang(reader *bufio.Reader) {
 	fmt.Print("Masukkan kata kunci bidang usaha: ")
 	keyword := strings.ToLower(readLineStr(reader))
 	found := false
-	for i := 0; i < len(data); i++ {
+	for i := range data {
 		bidang := strings.ToLower(data[i].BidangUsaha)
 		match := true
 		if !strings.Contains(bidang, keyword) {
@@ -273,7 +340,7 @@ func cariBidang(reader *bufio.Reader) {
 		if match {
 			fmt.Println()
 			fmt.Println("==================== Ditemukan =====================")
-			fmt.Printf("[%d] %s\n", i+1, data[i].Nama)
+			fmt.Printf("[%d] %s\n", data[i].id, data[i].Nama)
 			fmt.Printf("BIdang USaha\t: %s\n", data[i].BidangUsaha)
 			fmt.Printf("Tahun Berdiri\t: %d\n", data[i].TahunBerdiri)
 			fmt.Printf("Pendanaan\t: Rp.%.2f\n", data[i].TotalPendanaan)
@@ -286,7 +353,7 @@ func cariBidang(reader *bufio.Reader) {
 		}
 	}
 	if !found {
-		fmt.Println(">> Data tidak ditemukan.")
+		fmt.Println(">> Data Startup tidak ditemukan.")
 	}
 }
 
@@ -318,7 +385,7 @@ func cariNama(reader *bufio.Reader) {
 		namaMid := strings.ToLower(data[mid].Nama)
 		if namaMid == keyword {
 			fmt.Println("\n==================== Ditemukan =====================")
-			fmt.Printf("[%d] %s\n", mid+1, data[mid].Nama)
+			fmt.Printf("[%d] %s\n", data[mid].id, data[mid].Nama)
 			fmt.Printf("BIdang USaha\t: %s\n", data[mid].BidangUsaha)
 			fmt.Printf("Tahun Berdiri\t: %d\n", data[mid].TahunBerdiri)
 			fmt.Printf("Pendanaan\t: Rp.%.2f\n", data[mid].TotalPendanaan)
@@ -336,7 +403,7 @@ func cariNama(reader *bufio.Reader) {
 		}
 	}
 	if !found {
-		fmt.Println("Startup tidak ditemukan.")
+		fmt.Println(">> Data Startup tidak ditemukan.")
 	}
 }
 
@@ -369,7 +436,7 @@ func urut(reader *bufio.Reader) {
 }
 
 func urutDana() {
-	for i := 0; i < len(data)-1; i++ {
+	for i := range data {
 		maxIdx := i
 		for j := i + 1; j < len(data); j++ {
 			if data[j].TotalPendanaan > data[maxIdx].TotalPendanaan {
@@ -383,7 +450,7 @@ func urutDana() {
 }
 
 func urutTahunBerdiri() {
-	for i := 1; i < len(data); i++ {
+	for i := range data {
 		key := data[i]
 		j := i - 1
 		for j >= 0 && data[j].TahunBerdiri > key.TahunBerdiri {
