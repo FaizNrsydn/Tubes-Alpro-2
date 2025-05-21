@@ -120,7 +120,15 @@ func tambahDummy() {
 			{Nama: "Lukman", Peran: "Engineer"},
 		},
 	})
-	fmt.Println(">> Data dummy berhasil ditambahkan.")
+}
+
+func idSudahAda(id int) bool {
+	for _, s := range data {
+		if s.id == id {
+			return true
+		}
+	}
+	return false
 }
 
 func tambahStartup(reader *bufio.Reader) {
@@ -131,6 +139,10 @@ func tambahStartup(reader *bufio.Reader) {
 	for {
 		fmt.Print("ID Startup\t: ")
 		ID := readLineInt(reader)
+		if idSudahAda(ID) {
+			fmt.Println(">> ID sudah digunakan!")
+			continue
+		}
 		fmt.Print("Nama Startup\t: ")
 		Nama := readLineStr(reader)
 		fmt.Print("Bidang Usaha\t: ")
@@ -199,13 +211,12 @@ func Tampilkan() {
 
 func ubahStartup(reader *bufio.Reader) {
 	fmt.Println()
+	if len(data) == 0 {
+		fmt.Println("Belum ada startup yang tersedia.")
+	}
+	Tampilkan()
+	fmt.Println()
 	for {
-		if len(data) == 0 {
-			fmt.Println("Belum ada startup yang tersedia.")
-			break
-		}
-		Tampilkan()
-		fmt.Println()
 		fmt.Println("----------------------------------")
 		fmt.Println("||\tUbah data Startup\t||")
 		fmt.Println("----------------------------------")
@@ -225,15 +236,9 @@ func ubahStartup(reader *bufio.Reader) {
 		fmt.Printf("ID [%d]: ", data[idx].id)
 		newID := readLineInt(reader)
 		if newID != 0 && newID != data[idx].id {
-			duplikat := false
-			for i, s := range data {
-				if i != idx && s.id == newID {
-					duplikat = true
-					break
-				}
-			}
-			if duplikat {
-				fmt.Println(">> ID sudah digunakan oleh startup lain.")
+			if idSudahAda(newID) {
+				fmt.Println(">> ID sudah digunakan!")
+				continue
 			} else {
 				data[idx].id = newID
 			}
@@ -376,7 +381,7 @@ func cariNama(reader *bufio.Reader) {
 	}
 	insertionSortByNama()
 	fmt.Print("\nMasukkan nama startup yang ingin dicari: ")
-	keyword := readLineStr(reader)
+	keyword := strings.ToLower(readLineStr(reader))
 	low := 0
 	high := len(data) - 1
 	found := false
@@ -474,23 +479,28 @@ func tambahAnggotaTim(reader *bufio.Reader) {
 			break
 		}
 		Tampilkan()
-		fmt.Print("\nMasukkan nomor startup yang ingin ditambahkan anggota tim: ")
-		idx := readLineInt(reader)
-		idx--
-		if idx < 0 || idx >= len(data) {
-			fmt.Println("nomor tidak valid.")
-			break
+		fmt.Print("\nMasukkan ID startup yang ingin ditambahkan anggota tim: ")
+		id := readLineInt(reader)
+		ditemukan := false
+		for i := range data {
+			if data[i].id == id {
+				fmt.Print("Nama Anggota Tim: ")
+				nama := readLineStr(reader)
+				fmt.Print("Peran Anggota Tim: ")
+				peran := readLineStr(reader)
+				anggota := Tim{
+					Nama:  nama,
+					Peran: peran,
+				}
+				data[i].Tim = append(data[i].Tim, anggota)
+				fmt.Println(">> Anggota tim berhasil ditambahkan.")
+				ditemukan = true
+				break
+			}
 		}
-		fmt.Print("Nama Anggota Tim: ")
-		nama := readLineStr(reader)
-		fmt.Print("Peran Anggota Tim: ")
-		peran := readLineStr(reader)
-		anggota := Tim{
-			Nama:  nama,
-			Peran: peran,
+		if !ditemukan {
+			fmt.Println(">> ID startup tidak ditemukan.")
 		}
-		data[idx].Tim = append(data[idx].Tim, anggota)
-		fmt.Println(">> Anggota tim berhasil ditambahkan.")
 		if konvirmasi() {
 			break
 		}
