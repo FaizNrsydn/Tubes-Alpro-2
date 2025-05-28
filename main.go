@@ -196,48 +196,6 @@ func tambahStartup(reader *bufio.Reader) {
 	fmt.Println()
 }
 
-func tampilkanStartup() {
-	for {
-		if len(data) == 0 {
-			fmt.Println("‼️ Belum ada startup yang tersedia.")
-			break
-		}
-		for _, s := range data {
-			fmt.Println()
-			fmt.Println("-----+-----+-----+-----+-----+-----")
-			fmt.Printf("[%d] %s\n", s.id, s.Nama)
-			fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
-			fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
-			fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
-			fmt.Println("Tim\t\t:")
-			for _, t := range s.Tim {
-				fmt.Printf("  -> %s sebagai %s\n", t.Nama, t.Peran)
-			}
-			fmt.Println("-----+-----+-----+-----+-----+-----")
-		}
-		if konvirmasi() {
-			break
-		}
-	}
-	fmt.Println()
-}
-
-func Tampilkan() {
-	for _, s := range data {
-		fmt.Println()
-		fmt.Println("-----+-----+-----+-----+-----+-----")
-		fmt.Printf("[%d] %s\n", s.id, s.Nama)
-		fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
-		fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
-		fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
-		fmt.Println("Tim\t\t:")
-		for _, t := range s.Tim {
-			fmt.Printf("  -> %s sebagai %s\n", t.Nama, t.Peran)
-		}
-		fmt.Println("-----+-----+-----+-----+-----+-----")
-	}
-}
-
 func ubahStartup(reader *bufio.Reader) {
 	fmt.Println()
 	if len(data) == 0 {
@@ -326,6 +284,46 @@ func hapusStartup(reader *bufio.Reader) {
 		}
 		fmt.Println("✅ Startup", data[idx].Nama, "berhasil dihapus.")
 		data = append(data[:idx], data[idx+1:]...)
+		if konvirmasi() {
+			break
+		}
+	}
+	fmt.Println()
+}
+
+func tambahAnggotaTim(reader *bufio.Reader) {
+	fmt.Println()
+	fmt.Println("-------------------------------------------------------")
+	fmt.Println("|| Tambah daftar anggota tim dan peran dalam Startup ||")
+	fmt.Println("-------------------------------------------------------")
+	for {
+		if len(data) == 0 {
+			fmt.Println("‼️ Belum ada startup yang tersedia.")
+			break
+		}
+		Tampilkan()
+		fmt.Print("\nMasukkan ID startup yang ingin ditambahkan anggota tim: ")
+		id := readLineInt(reader)
+		ditemukan := false
+		for i := range data {
+			if data[i].id == id {
+				fmt.Print("Nama Anggota Tim: ")
+				nama := readLineStr(reader)
+				fmt.Print("Peran Anggota Tim: ")
+				peran := readLineStr(reader)
+				anggota := Tim{
+					Nama:  nama,
+					Peran: peran,
+				}
+				data[i].Tim = append(data[i].Tim, anggota)
+				fmt.Println("✅ Anggota tim berhasil ditambahkan.")
+				ditemukan = true
+				break
+			}
+		}
+		if !ditemukan {
+			fmt.Println("‼️ ID startup tidak ditemukan.")
+		}
 		if konvirmasi() {
 			break
 		}
@@ -497,44 +495,46 @@ func urutTahunBerdiri() {
 	Tampilkan()
 }
 
-func tambahAnggotaTim(reader *bufio.Reader) {
-	fmt.Println()
-	fmt.Println("-------------------------------------------------------")
-	fmt.Println("|| Tambah daftar anggota tim dan peran dalam Startup ||")
-	fmt.Println("-------------------------------------------------------")
+func tampilkanStartup() {
 	for {
 		if len(data) == 0 {
 			fmt.Println("‼️ Belum ada startup yang tersedia.")
 			break
 		}
-		Tampilkan()
-		fmt.Print("\nMasukkan ID startup yang ingin ditambahkan anggota tim: ")
-		id := readLineInt(reader)
-		ditemukan := false
-		for i := range data {
-			if data[i].id == id {
-				fmt.Print("Nama Anggota Tim: ")
-				nama := readLineStr(reader)
-				fmt.Print("Peran Anggota Tim: ")
-				peran := readLineStr(reader)
-				anggota := Tim{
-					Nama:  nama,
-					Peran: peran,
-				}
-				data[i].Tim = append(data[i].Tim, anggota)
-				fmt.Println("✅ Anggota tim berhasil ditambahkan.")
-				ditemukan = true
-				break
+		for _, s := range data {
+			fmt.Println()
+			fmt.Println("-----+-----+-----+-----+-----+-----")
+			fmt.Printf("[%d] %s\n", s.id, s.Nama)
+			fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
+			fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
+			fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
+			fmt.Println("Tim\t\t:")
+			for _, t := range s.Tim {
+				fmt.Printf("  -> %s sebagai %s\n", t.Nama, t.Peran)
 			}
-		}
-		if !ditemukan {
-			fmt.Println("‼️ ID startup tidak ditemukan.")
+			fmt.Println("-----+-----+-----+-----+-----+-----")
 		}
 		if konvirmasi() {
 			break
 		}
 	}
 	fmt.Println()
+}
+
+func Tampilkan() {
+	for _, s := range data {
+		fmt.Println()
+		fmt.Println("-----+-----+-----+-----+-----+-----")
+		fmt.Printf("[%d] %s\n", s.id, s.Nama)
+		fmt.Printf("BIdang USaha\t: %s\n", s.BidangUsaha)
+		fmt.Printf("Tahun Berdiri\t: %d\n", s.TahunBerdiri)
+		fmt.Printf("Pendanaan\t: Rp.%.2f\n", s.TotalPendanaan)
+		fmt.Println("Tim\t\t:")
+		for _, t := range s.Tim {
+			fmt.Printf("  -> %s sebagai %s\n", t.Nama, t.Peran)
+		}
+		fmt.Println("-----+-----+-----+-----+-----+-----")
+	}
 }
 
 func laporanBidang() {
